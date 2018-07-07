@@ -32,6 +32,7 @@ def select(sql, args, size=None):
 
 @asyncio.coroutine
 def execute(sql, args):
+    #测试git是否成功
     log(sql)
     with (yield from __pool) as conn:
         try:
