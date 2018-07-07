@@ -33,6 +33,7 @@ def select(sql, args, size=None):
 @asyncio.coroutine
 def execute(sql, args):
     log(sql)
+    log(sql)
     with (yield from __pool) as conn:
         try:
             cur = yield from conn.cursor()
