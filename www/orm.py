@@ -181,7 +181,7 @@ class Model(dict, metaclass = ModelMetaClass):
 
     @classmethod
     @asyncio.coroutine
-    def findNumber(cls, selectField, where = None, args = **kw):
+    def findNumber(cls, selectField, where = None, args = None):
         ' find number by select and where. '
         sql = ['select %s _num_ from `%s`' % (selectField, cls.__table__)];
 
