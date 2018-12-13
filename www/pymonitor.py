@@ -56,6 +56,7 @@ def start_watch(path, callback):
 
 if __name__ == '__main__':
     argv = sys.argv[1:]
+    print(argv)
     if not argv:
         print('Usage: ./pymonitor app.py')
         exit(0)
