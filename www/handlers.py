@@ -3,12 +3,12 @@
 
 ' url handlers '
 
-import re, time, json, logging, hashlib, base64, asyncio
+import re, time, json, logging, hashlib, asyncio
 import markdown2
 
 from aiohttp import web
 from coroweb import get, post
-from apis import Page, APIValueError, APIResourceNotFoundError
+from apis import Page, APIError, APIValueError, APIPermissionError, APIResourceNotFoundError
 
 from models import User, Comment, Blog, next_id
 from config import configs
@@ -24,7 +24,7 @@ def get_page_index(page_str):
     p = 1
     try:
         p = int(page_str)
-    except ValueError as e:
+    except:
         pass
     if p < 1:
         p = 1
@@ -82,6 +82,7 @@ def index(*, page = '1'):
     return {
         '__template__': 'blogs.html',
         'page': page,
+        'page_index': page_index,
         'blogs': blogs
     }
 
@@ -119,10 +120,10 @@ def authenticate(*, email, passwd):
     users = yield from User.findAll('email = ?', [email])
     if len(users) == 0:
         raise APIValueError('email', 'Email not exists.')
-    user = user[0]
+    user = users[0]
     #check password
     sha1 = hashlib.sha1()
-    sha1.update(use.id.encode('utf-8'))
+    sha1.update(user.id.encode('utf-8'))
     sha1.update(b':')
     sha1.update(passwd.encode('utf-8'))
     if user.passwd != sha1.hexdigest():
@@ -277,8 +278,8 @@ def api_create_blog(request, *, name, summary, content):
         raise APIValueError('name', 'name cannot be empty.')
     if not summary or not summary.strip():
         raise APIValueError('summary', 'summary cannot be empty.')
-    if not comment or not comment.strip():
-        raise APIValueError('comment', 'comment cannot be empty.')
+    if not content or not content.strip():
+        raise APIValueError('content', 'content cannot be empty.')
     blog = yield from Blog(user_id = request.__user__.id, user_name = request.__user__.name, user_image = request.__user__.image, name = name.strip(), summary = summary.strip(), content = content.strip())
     yield from blog.save()
     return blog
@@ -291,8 +292,8 @@ def api_update_blog(id, request, *, name, summary, content):
         raise APIValueError('name', 'name cannot be empty.')
     if not summary or not summary.strip():
         raise APIValueError('summary', 'summary cannot be empty.')
-    if not comment or not comment.strip():
-        raise APIValueError('comment', 'comment cannot be empty.')
+    if not content or not content.strip():
+        raise APIValueError('content', 'content cannot be empty.')
     blog.name = name.strip()
     blog.summary = summary.strip()
     blog.content = content.strip()

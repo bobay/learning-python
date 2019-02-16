@@ -5,8 +5,6 @@
 JSON API definition.
 '''
 
-import json, logging, inspect, functools
-
 class Page(object):
     '''
     Page object for display pages.

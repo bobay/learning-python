@@ -147,6 +147,10 @@ def init(loop):
     logging.info('server started at http://127.0.0.1:9000...')
     return srv
 
+# 从asyncio中获取EventLoop引用，为asyncio.BaseEventLoop的对象
+# 注意：变量名必须叫loop,否则 TypeError: __init__() got an unexpected keyword argument 'my_event_loop'，不明白为啥？
 loop = asyncio.get_event_loop()
+# 运行协程，直到完成，BaseEventLoop.run_until_complete(future)
 loop.run_until_complete(init(loop))
+# 运行协程，直到调用 stop(), BaseEventLoop.run_forever()
 loop.run_forever()
